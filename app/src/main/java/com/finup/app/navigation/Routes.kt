@@ -8,4 +8,6 @@ sealed class Routes(val route: String) {
     object Perfil : Routes("perfil")
     object Relatorio : Routes("relatorio")
     object AddTransaction : Routes("addTransaction")
+
+    object AddMeta : Routes("addMeta")
 }

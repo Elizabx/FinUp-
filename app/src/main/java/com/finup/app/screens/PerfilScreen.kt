@@ -72,7 +72,9 @@ fun PerfilScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
-                    onClick = {}
+                    onClick = {
+                        navController.navigate("login")
+                    }
                 ) {
                     Text("Sair")
                 }

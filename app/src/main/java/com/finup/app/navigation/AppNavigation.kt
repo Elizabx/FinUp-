@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.finup.app.screens.*
+import com.finup.app.screens.AddMetaScreen
 
 @Composable
 fun AppNavigation() {
@@ -42,6 +43,10 @@ fun AppNavigation() {
 
         composable(Routes.AddTransaction.route) {
             AddTransactionScreen(navController)
+        }
+
+        composable(Routes.AddMeta.route) {
+            AddMetaScreen(navController)
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.finup.app.model
 
-data class Transacao(
+data class Transaction(
+    val id: Int,
     val descricao: String,
     val valor: Double,
-    val categoria: String,
-    val tipo: String
+    val tipo: String // "Receita" ou "Despesa"
 )
