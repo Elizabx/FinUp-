@@ -1,19 +1,38 @@
 package com.finup.app.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.finup.app.model.Transaction
+import androidx.lifecycle.viewModelScope
+import com.finup.app.database.entity.TransactionEntity
+import com.finup.app.repository.TransactionRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class TransactionViewModel : ViewModel() {
+class TransactionViewModel(
+    private val repository: TransactionRepository
+) : ViewModel() {
 
-    private val _transacoes = mutableStateListOf<Transaction>()
-    val transacoes: List<Transaction> = _transacoes
+    val transacoes = repository
+        .listarTodas()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
-    fun adicionarTransacao(transaction: Transaction) {
-        _transacoes.add(transaction)
+    fun adicionarTransacao(
+        transaction: TransactionEntity
+    ) {
+        viewModelScope.launch {
+            repository.inserir(transaction)
+        }
     }
 
-    fun removerTransacao(id: Int) {
-        _transacoes.removeIf { it.id == id }
+    fun removerTransacao(
+        transaction: TransactionEntity
+    ) {
+        viewModelScope.launch {
+            repository.deletar(transaction)
+        }
     }
 }

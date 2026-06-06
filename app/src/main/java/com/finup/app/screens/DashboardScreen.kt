@@ -19,16 +19,40 @@ import androidx.navigation.NavController
 import com.finup.app.viewmodel.MetaViewModel
 import com.finup.app.viewmodel.TransactionViewModel
 
+import androidx.compose.ui.platform.LocalContext
+import com.finup.app.FinUpApplication
+import com.finup.app.viewmodel.ViewModelFactory
+
 @Composable
 fun DashboardScreen(
     navController: NavController
 ) {
 
-    val transactionViewModel: TransactionViewModel = viewModel()
-    val transacoes = transactionViewModel.transacoes
+    val app =
+        LocalContext.current.applicationContext
+                as FinUpApplication
 
-    val metaViewModel: MetaViewModel = viewModel()
-    val metas = metaViewModel.metas.collectAsState().value
+    val transactionViewModel: TransactionViewModel =
+        viewModel(
+            factory = ViewModelFactory(
+                transactionRepository =
+                    app.container.transactionRepository
+            )
+        )
+
+    val transacoes =
+        transactionViewModel.transacoes.collectAsState().value
+
+    val metaViewModel: MetaViewModel =
+        viewModel(
+            factory = ViewModelFactory(
+                metaRepository =
+                    app.container.metaRepository
+            )
+        )
+
+    val metas =
+        metaViewModel.metas.collectAsState().value
 
     val receitas = transacoes
         .filter { it.tipo == "Receita" }
@@ -124,7 +148,7 @@ fun DashboardScreen(
                         }
 
                         OutlinedButton(onClick = {
-                            metaViewModel.removerMeta(meta.id)
+                            metaViewModel.removerMeta(meta)
                         }) {
                             Text("Excluir")
                         }
@@ -153,9 +177,9 @@ fun DashboardScreen(
 
                         val valor = valorInput.toDoubleOrNull() ?: 0.0
 
-                        metaSelecionadaId?.let {
-                            metaViewModel.adicionarValor(it, valor)
-                        }
+                        //metaSelecionadaId?.let {
+                            //metaViewModel.adicionarValor(it, valor)
+                        //}
 
                         valorInput = ""
                         showDialog = false

@@ -1,34 +1,46 @@
 package com.finup.app.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.finup.app.model.MetaFinanceira
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.viewModelScope
+import com.finup.app.database.entity.MetaEntity
+import com.finup.app.repository.MetaRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class MetaViewModel : ViewModel() {
+class MetaViewModel(
+    private val repository: MetaRepository
+) : ViewModel() {
 
-    private val _metas = MutableStateFlow<List<MetaFinanceira>>(emptyList())
-    val metas: StateFlow<List<MetaFinanceira>> = _metas
+    val metas = repository
+        .listarTodas()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
-    fun adicionarMeta(meta: MetaFinanceira) {
-        _metas.value = _metas.value + meta
-    }
-
-    fun removerMeta(id: Int) {
-        _metas.value = _metas.value.filter { it.id != id }
-    }
-
-    fun atualizarMeta(metaAtualizada: MetaFinanceira) {
-        _metas.value = _metas.value.map {
-            if (it.id == metaAtualizada.id) metaAtualizada else it
+    fun adicionarMeta(
+        meta: MetaEntity
+    ) {
+        viewModelScope.launch {
+            repository.inserir(meta)
         }
     }
 
-    fun adicionarValor(id: Int, valor: Double) {
-        _metas.value = _metas.value.map { meta ->
-            if (meta.id == id) {
-                meta.copy(valorAtual = meta.valorAtual + valor)
-            } else meta
+    fun removerMeta(
+        meta: MetaEntity
+    ) {
+        viewModelScope.launch {
+            repository.deletar(meta)
+        }
+    }
+
+    fun atualizarMeta(
+        meta: MetaEntity
+    ) {
+        viewModelScope.launch {
+            repository.atualizar(meta)
         }
     }
 }

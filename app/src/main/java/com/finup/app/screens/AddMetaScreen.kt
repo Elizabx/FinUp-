@@ -6,16 +6,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.finup.app.model.MetaFinanceira
 import com.finup.app.viewmodel.MetaViewModel
 import androidx.navigation.NavController
+
+import com.finup.app.database.entity.MetaEntity
+import androidx.compose.ui.platform.LocalContext
+import com.finup.app.FinUpApplication
+import com.finup.app.viewmodel.ViewModelFactory
 
 @Composable
 fun AddMetaScreen(
     navController: NavController
 ) {
 
-    val metaViewModel: MetaViewModel = viewModel()
+    val app =
+        LocalContext.current.applicationContext
+                as FinUpApplication
+
+    val metaViewModel: MetaViewModel =
+        viewModel(
+            factory = ViewModelFactory(
+                metaRepository =
+                    app.container.metaRepository
+            )
+        )
 
     var titulo by remember { mutableStateOf("") }
     var valorMeta by remember { mutableStateOf("") }
@@ -74,7 +88,7 @@ fun AddMetaScreen(
                     return@Button
                 }
 
-                val meta = MetaFinanceira(
+                val meta = MetaEntity(
                     id = (0..100000).random(),
                     titulo = titulo,
                     valorMeta = metaMeta,
