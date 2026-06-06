@@ -4,145 +4,107 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.finup.app.viewmodel.TransactionViewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.LocalContext
 import com.finup.app.FinUpApplication
-import com.finup.app.viewmodel.ViewModelFactory
+import com.finup.app.viewmodel.*
 
 @Composable
 fun RelatorioScreen(
     navController: NavController
 ) {
+    val app = LocalContext.current.applicationContext as FinUpApplication
 
-    val app =
-        LocalContext.current.applicationContext
-                as FinUpApplication
+    val transactionViewModel: TransactionViewModel = viewModel(
+        factory = TransactionViewModelFactory(app.container.transactionRepository)
+    )
 
-    val transactionViewModel: TransactionViewModel =
-        viewModel(
-            factory = ViewModelFactory(
-                transactionRepository =
-                    app.container.transactionRepository
-            )
-        )
+    val transacoes by transactionViewModel.transacoes.collectAsState()
 
-    val transacoes =
-        transactionViewModel.transacoes.collectAsState().value
-
-    val gastosPorCategoria =
+    val despesasPorCategoria = remember(transacoes) {
         transacoes
             .filter { it.tipo == "Despesa" }
             .groupBy { it.categoria }
-            .mapValues { grupo ->
-                grupo.value.sumOf { it.valor }
-            }
+            .mapValues { it.value.sumOf { t -> t.valor } }
+    }
 
-    val totalGastos =
+    val totalGastos = remember(transacoes) {
         transacoes
             .filter { it.tipo == "Despesa" }
             .sumOf { it.valor }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
             .verticalScroll(rememberScrollState()),
-
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(
-            text = "Relatórios",
-            style = MaterialTheme.typography.headlineLarge
-        )
+        Text("Relatórios", style = MaterialTheme.typography.headlineLarge)
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
 
-        Text(
-            text = "Gastos por Categoria",
-            style = MaterialTheme.typography.titleLarge
-        )
+        Text("Gastos por Categoria", style = MaterialTheme.typography.titleLarge)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-        if (gastosPorCategoria.isEmpty()) {
+        if (despesasPorCategoria.isEmpty()) {
 
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Card(Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Nenhuma despesa cadastrada.",
+                    "Nenhuma despesa cadastrada.",
                     modifier = Modifier.padding(16.dp)
                 )
             }
 
         } else {
 
-            gastosPorCategoria.forEach { (categoria, valor) ->
+            despesasPorCategoria.forEach { (categoria, valor) ->
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                 ) {
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-
-                        horizontalArrangement =
-                            Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-
                         Text(categoria)
-
-                        Text(
-                            text = "R$ %.2f".format(valor)
-                        )
+                        Text("R$ %.2f".format(valor))
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
 
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+                Text("Total de Gastos", style = MaterialTheme.typography.titleMedium)
 
-                Text(
-                    text = "Total de Gastos",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = "R$ %.2f".format(totalGastos),
+                    "R$ %.2f".format(totalGastos),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
 
-        Button(
-            onClick = {
-                navController.popBackStack()
-            }
-        ) {
+        Button(onClick = { navController.popBackStack() }) {
             Text("Voltar")
         }
     }

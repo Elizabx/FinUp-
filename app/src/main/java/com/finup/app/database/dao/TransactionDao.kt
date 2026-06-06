@@ -1,26 +1,24 @@
 package com.finup.app.database.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.finup.app.database.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransactionDao {
 
+    @Query("SELECT * FROM transactions ORDER BY id DESC")
+    fun getAll(): Flow<List<TransactionEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun inserir(
-        transaction: TransactionEntity
-    )
+    suspend fun insert(transaction: TransactionEntity)
 
     @Delete
-    suspend fun deletar(
-        transaction: TransactionEntity
-    )
+    suspend fun delete(transaction: TransactionEntity)
 
-    @Query("SELECT * FROM transactions")
-    fun listarTodas(): Flow<List<TransactionEntity>>
+    @Update
+    suspend fun update(transaction: TransactionEntity)
+
+    @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Int): TransactionEntity?
 }

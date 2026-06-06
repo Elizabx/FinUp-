@@ -1,32 +1,15 @@
 package com.finup.app.repository
 
-import com.finup.app.database.dao.MetaDao
 import com.finup.app.database.entity.MetaEntity
 import kotlinx.coroutines.flow.Flow
 
-class MetaRepository(
-    private val dao: MetaDao
-) {
+interface MetaRepository {
 
-    fun listarTodas(): Flow<List<MetaEntity>> {
-        return dao.listarTodas()
-    }
+    fun listarTodas(): Flow<List<MetaEntity>>
 
-    suspend fun inserir(
-        meta: MetaEntity
-    ) {
-        dao.inserir(meta)
-    }
+    suspend fun inserir(meta: MetaEntity)
 
-    suspend fun atualizar(
-        meta: MetaEntity
-    ) {
-        dao.atualizar(meta)
-    }
+    suspend fun deletar(meta: MetaEntity)
 
-    suspend fun deletar(
-        meta: MetaEntity
-    ) {
-        dao.deletar(meta)
-    }
+    suspend fun atualizar(meta: MetaEntity)
 }

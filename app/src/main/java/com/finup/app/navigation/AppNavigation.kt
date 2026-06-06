@@ -1,11 +1,12 @@
 package com.finup.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.finup.app.screens.*
-import com.finup.app.screens.AddMetaScreen
 
 @Composable
 fun AppNavigation() {
@@ -47,6 +48,21 @@ fun AppNavigation() {
 
         composable(Routes.AddMeta.route) {
             AddMetaScreen(navController)
+        }
+
+        composable(
+            route = "edit_transaction/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })
+        ) { backStackEntry ->
+
+            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+
+            EditTransactionScreen(
+                navController = navController,
+                transactionId = id
+            )
         }
     }
 }

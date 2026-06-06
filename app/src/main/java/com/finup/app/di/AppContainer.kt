@@ -1,24 +1,16 @@
 package com.finup.app.di
 
-import android.content.Context
-import com.finup.app.database.DatabaseProvider
+import com.finup.app.database.FinUpDatabase
 import com.finup.app.repository.MetaRepository
+import com.finup.app.repository.MetaRepositoryImpl
 import com.finup.app.repository.TransactionRepository
+import com.finup.app.repository.TransactionRepositoryImpl
 
-class AppContainer(
-    context: Context
-) {
+class AppContainer(database: FinUpDatabase) {
 
-    private val database =
-        DatabaseProvider.getDatabase(context)
+    val transactionRepository: TransactionRepository =
+        TransactionRepositoryImpl(database.transactionDao())
 
-    val transactionRepository =
-        TransactionRepository(
-            database.transactionDao()
-        )
-
-    val metaRepository =
-        MetaRepository(
-            database.metaDao()
-        )
+    val metaRepository: MetaRepository =
+        MetaRepositoryImpl(database.metaDao())
 }

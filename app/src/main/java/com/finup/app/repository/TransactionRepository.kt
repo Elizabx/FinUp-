@@ -1,26 +1,17 @@
 package com.finup.app.repository
 
-import com.finup.app.database.dao.TransactionDao
 import com.finup.app.database.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 
-class TransactionRepository(
-    private val dao: TransactionDao
-) {
+interface TransactionRepository {
 
-    fun listarTodas(): Flow<List<TransactionEntity>> {
-        return dao.listarTodas()
-    }
+    fun listarTodas(): Flow<List<TransactionEntity>>
 
-    suspend fun inserir(
-        transaction: TransactionEntity
-    ) {
-        dao.inserir(transaction)
-    }
+    suspend fun inserir(transaction: TransactionEntity)
 
-    suspend fun deletar(
-        transaction: TransactionEntity
-    ) {
-        dao.deletar(transaction)
-    }
+    suspend fun deletar(transaction: TransactionEntity)
+
+    suspend fun atualizar(transaction: TransactionEntity)
+
+    suspend fun buscarPorId(id: Int): TransactionEntity?
 }

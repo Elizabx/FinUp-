@@ -11,25 +11,19 @@ import androidx.navigation.NavController
 import com.finup.app.FinUpApplication
 import com.finup.app.database.entity.TransactionEntity
 import com.finup.app.viewmodel.TransactionViewModel
-import com.finup.app.viewmodel.ViewModelFactory
+import com.finup.app.viewmodel.TransactionViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionScreen(
-    navController: NavController
-) {
+fun AddTransactionScreen(navController: NavController) {
 
-    val app =
-        LocalContext.current.applicationContext
-                as FinUpApplication
+    val app = LocalContext.current.applicationContext as FinUpApplication
 
-    val viewModel: TransactionViewModel =
-        viewModel(
-            factory = ViewModelFactory(
-                transactionRepository =
-                    app.container.transactionRepository
-            )
+    val viewModel: TransactionViewModel = viewModel(
+        factory = TransactionViewModelFactory(
+            transactionRepository = app.container.transactionRepository
         )
+    )
 
     var descricao by remember { mutableStateOf("") }
     var valor by remember { mutableStateOf("") }
@@ -45,13 +39,8 @@ fun AddTransactionScreen(
         "Outros"
     )
 
-    var categoriaSelecionada by remember {
-        mutableStateOf(categorias.first())
-    }
-
-    var expanded by remember {
-        mutableStateOf(false)
-    }
+    var categoriaSelecionada by remember { mutableStateOf(categorias.first()) }
+    var expanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -60,12 +49,9 @@ fun AddTransactionScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Text(
-            text = "Nova Transação",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Text("Nova Transação", style = MaterialTheme.typography.headlineMedium)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
             value = descricao,
@@ -74,7 +60,7 @@ fun AddTransactionScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = valor,
@@ -83,39 +69,21 @@ fun AddTransactionScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
 
-        Text(
-            text = "Tipo da Transação",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Text("Tipo da Transação", style = MaterialTheme.typography.titleMedium)
 
         Row {
-
-            Button(
-                onClick = { tipo = "Receita" }
-            ) {
-                Text("Receita")
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Button(
-                onClick = { tipo = "Despesa" }
-            ) {
-                Text("Despesa")
-            }
+            Button(onClick = { tipo = "Receita" }) { Text("Receita") }
+            Spacer(Modifier.width(8.dp))
+            Button(onClick = { tipo = "Despesa" }) { Text("Despesa") }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
+            onExpandedChange = { expanded = !expanded }
         ) {
 
             OutlinedTextField(
@@ -124,9 +92,7 @@ fun AddTransactionScreen(
                 readOnly = true,
                 label = { Text("Categoria") },
                 trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(
-                        expanded = expanded
-                    )
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
                 },
                 modifier = Modifier
                     .menuAnchor()
@@ -135,17 +101,11 @@ fun AddTransactionScreen(
 
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = {
-                    expanded = false
-                }
+                onDismissRequest = { expanded = false }
             ) {
-
                 categorias.forEach { categoria ->
-
                     DropdownMenuItem(
-                        text = {
-                            Text(categoria)
-                        },
+                        text = { Text(categoria) },
                         onClick = {
                             categoriaSelecionada = categoria
                             expanded = false
@@ -155,24 +115,29 @@ fun AddTransactionScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(Modifier.height(24.dp))
 
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
 
-                val transaction = TransactionEntity(
-                    id = (0..100000).random(),
+                val valorDouble = valor.toDoubleOrNull()
+
+                if (
+                    descricao.isBlank() ||
+                    valorDouble == null ||
+                    valorDouble <= 0
+                ) return@Button
+
+                val tx = TransactionEntity(
+                    id = 0, // 👈 Room gera automático
                     descricao = descricao,
-                    valor = valor.toDoubleOrNull() ?: 0.0,
+                    valor = valorDouble,
                     tipo = tipo,
                     categoria = categoriaSelecionada
                 )
 
-                viewModel.adicionarTransacao(
-                    transaction
-                )
-
+                viewModel.adicionarTransacao(tx)
                 navController.popBackStack()
             }
         ) {

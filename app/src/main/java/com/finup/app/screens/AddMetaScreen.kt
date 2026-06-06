@@ -12,24 +12,18 @@ import androidx.navigation.NavController
 import com.finup.app.database.entity.MetaEntity
 import androidx.compose.ui.platform.LocalContext
 import com.finup.app.FinUpApplication
-import com.finup.app.viewmodel.ViewModelFactory
+import com.finup.app.viewmodel.MetaViewModelFactory
 
 @Composable
-fun AddMetaScreen(
-    navController: NavController
-) {
+fun AddMetaScreen(navController: NavController) {
 
-    val app =
-        LocalContext.current.applicationContext
-                as FinUpApplication
+    val app = LocalContext.current.applicationContext as FinUpApplication
 
-    val metaViewModel: MetaViewModel =
-        viewModel(
-            factory = ViewModelFactory(
-                metaRepository =
-                    app.container.metaRepository
-            )
+    val metaViewModel: MetaViewModel = viewModel(
+        factory = MetaViewModelFactory(
+            metaRepository = app.container.metaRepository
         )
+    )
 
     var titulo by remember { mutableStateOf("") }
     var valorMeta by remember { mutableStateOf("") }
@@ -44,7 +38,7 @@ fun AddMetaScreen(
 
         Text("Nova Meta", style = MaterialTheme.typography.headlineMedium)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
             value = titulo,
@@ -53,7 +47,7 @@ fun AddMetaScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = valorMeta,
@@ -62,7 +56,7 @@ fun AddMetaScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = valorAtual,
@@ -71,7 +65,7 @@ fun AddMetaScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
 
         Button(
             modifier = Modifier.fillMaxWidth(),
@@ -84,29 +78,26 @@ fun AddMetaScreen(
                     titulo.isBlank() ||
                     metaMeta == null || metaMeta <= 0 ||
                     metaAtual == null || metaAtual < 0
-                ) {
-                    return@Button
-                }
+                ) return@Button
 
                 val meta = MetaEntity(
-                    id = (0..100000).random(),
+                    id = 0, // 👈 Room deve gerar isso
                     titulo = titulo,
                     valorMeta = metaMeta,
                     valorAtual = metaAtual
                 )
 
                 metaViewModel.adicionarMeta(meta)
-
                 navController.popBackStack()
             }
         ) {
             Text("Salvar Meta")
         }
 
-        Button(
-            onClick = {
-                navController.popBackStack()
-            }
+        Spacer(Modifier.height(8.dp))
+
+        OutlinedButton(
+            onClick = { navController.popBackStack() }
         ) {
             Text("Voltar")
         }

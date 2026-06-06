@@ -12,27 +12,32 @@ class TransactionViewModel(
     private val repository: TransactionRepository
 ) : ViewModel() {
 
-    val transacoes = repository
-        .listarTodas()
+    val transacoes = repository.listarTodas()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             emptyList()
         )
 
-    fun adicionarTransacao(
-        transaction: TransactionEntity
-    ) {
+    fun adicionarTransacao(transaction: TransactionEntity) {
         viewModelScope.launch {
             repository.inserir(transaction)
         }
     }
 
-    fun removerTransacao(
-        transaction: TransactionEntity
-    ) {
+    fun removerTransacao(transaction: TransactionEntity) {
         viewModelScope.launch {
             repository.deletar(transaction)
         }
+    }
+
+    fun atualizarTransacao(transaction: TransactionEntity) {
+        viewModelScope.launch {
+            repository.atualizar(transaction)
+        }
+    }
+
+    suspend fun buscarPorId(id: Int): TransactionEntity? {
+        return repository.buscarPorId(id)
     }
 }

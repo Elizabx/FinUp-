@@ -43,4 +43,28 @@ class MetaViewModel(
             repository.atualizar(meta)
         }
     }
+
+    fun adicionarValor(
+        id: Int,
+        valor: Double
+    ) {
+        viewModelScope.launch {
+
+            val meta =
+                metas.value.find { it.id == id }
+
+            if (meta != null) {
+
+                val metaAtualizada =
+                    meta.copy(
+                        valorAtual =
+                            meta.valorAtual + valor
+                    )
+
+                repository.atualizar(
+                    metaAtualizada
+                )
+            }
+        }
+    }
 }
