@@ -9,20 +9,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.finup.app.di.rememberAppViewModel
+import com.finup.app.viewmodel.TransactionViewModel
 import androidx.navigation.NavController
-import com.finup.app.FinUpApplication
-import com.finup.app.viewmodel.*
 
 @Composable
 fun RelatorioScreen(
     navController: NavController
 ) {
-    val app = LocalContext.current.applicationContext as FinUpApplication
 
-    val transactionViewModel: TransactionViewModel = viewModel(
-        factory = TransactionViewModelFactory(app.container.transactionRepository)
-    )
+    val transactionViewModel: TransactionViewModel = rememberAppViewModel()
 
     val transacoes by transactionViewModel.transacoes.collectAsState()
 
@@ -58,23 +54,19 @@ fun RelatorioScreen(
         if (despesasPorCategoria.isEmpty()) {
 
             Card(Modifier.fillMaxWidth()) {
-                Text(
-                    "Nenhuma despesa cadastrada.",
-                    modifier = Modifier.padding(16.dp)
-                )
+                Text("Nenhuma despesa cadastrada.", Modifier.padding(16.dp))
             }
 
         } else {
 
             despesasPorCategoria.forEach { (categoria, valor) ->
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                 ) {
                     Row(
-                        modifier = Modifier
+                        Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -90,15 +82,9 @@ fun RelatorioScreen(
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp)) {
-
                 Text("Total de Gastos", style = MaterialTheme.typography.titleMedium)
-
                 Spacer(Modifier.height(8.dp))
-
-                Text(
-                    "R$ %.2f".format(totalGastos),
-                    style = MaterialTheme.typography.headlineSmall
-                )
+                Text("R$ %.2f".format(totalGastos))
             }
         }
 

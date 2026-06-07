@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
 import androidx.navigation.NavController
 
 @Composable
@@ -18,7 +17,6 @@ fun PerfilScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -28,7 +26,7 @@ fun PerfilScreen(
             style = MaterialTheme.typography.headlineLarge
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(Modifier.height(24.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -40,41 +38,49 @@ fun PerfilScreen(
                 Text("Nome:")
                 Text("nynyjxs")
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Text("Email:")
                 Text("nynyjxs@gmail.com")
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(16.dp))
 
                 Button(
-                    onClick = {}
+                    onClick = { /* futuramente editar perfil */ },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Editar Perfil")
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Button(
-                    onClick = {}
+                    onClick = { /* futuramente senha */ },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Alterar Senha")
                 }
 
-                Button(
+                Spacer(Modifier.height(8.dp))
+
+                OutlinedButton(
                     onClick = {
                         navController.popBackStack()
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Voltar")
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Button(
                     onClick = {
-                        navController.navigate("login")
-                    }
+                        navController.navigate("login") {
+                            popUpTo(0) // limpa stack (logout real)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Sair")
                 }

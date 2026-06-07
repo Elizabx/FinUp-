@@ -9,21 +9,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.finup.app.FinUpApplication
+import com.finup.app.viewmodel.AppViewModelFactory
 import com.finup.app.viewmodel.EditTransactionViewModel
-import com.finup.app.viewmodel.TransactionViewModelFactory
 
 @Composable
 fun EditTransactionScreen(
     navController: NavController,
-    transactionId: Int,
-    app: FinUpApplication = LocalContext.current.applicationContext as FinUpApplication
+    transactionId: Int
 ) {
 
-    val viewModel: EditTransactionViewModel = viewModel(
-        factory = TransactionViewModelFactory(
-            app.container.transactionRepository
-        )
-    )
+    val app = LocalContext.current.applicationContext as FinUpApplication
+
+    val factory = AppViewModelFactory(app.container)
+
+    val viewModel: EditTransactionViewModel = viewModel(factory = factory)
 
     LaunchedEffect(transactionId) {
         viewModel.carregar(transactionId)

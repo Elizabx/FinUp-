@@ -5,25 +5,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.finup.app.viewmodel.MetaViewModel
 import androidx.navigation.NavController
+import com.finup.app.di.rememberAppViewModel
 
 import com.finup.app.database.entity.MetaEntity
 import androidx.compose.ui.platform.LocalContext
 import com.finup.app.FinUpApplication
-import com.finup.app.viewmodel.MetaViewModelFactory
 
 @Composable
 fun AddMetaScreen(navController: NavController) {
 
     val app = LocalContext.current.applicationContext as FinUpApplication
 
-    val metaViewModel: MetaViewModel = viewModel(
-        factory = MetaViewModelFactory(
-            metaRepository = app.container.metaRepository
-        )
-    )
+    val metaViewModel: MetaViewModel = rememberAppViewModel()
 
     var titulo by remember { mutableStateOf("") }
     var valorMeta by remember { mutableStateOf("") }
@@ -81,7 +76,7 @@ fun AddMetaScreen(navController: NavController) {
                 ) return@Button
 
                 val meta = MetaEntity(
-                    id = 0, // 👈 Room deve gerar isso
+                    id = 0,
                     titulo = titulo,
                     valorMeta = metaMeta,
                     valorAtual = metaAtual
@@ -97,7 +92,10 @@ fun AddMetaScreen(navController: NavController) {
         Spacer(Modifier.height(8.dp))
 
         OutlinedButton(
-            onClick = { navController.popBackStack() }
+            onClick = {
+                navController.popBackStack()
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Voltar")
         }

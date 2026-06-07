@@ -51,7 +51,7 @@ class EditTransactionViewModel(
         val valorDouble = valor.replace(",", ".").toDoubleOrNull()
 
         if (valorDouble == null) {
-            return // ou mostrar erro na UI depois
+            return
         }
 
         viewModelScope.launch {

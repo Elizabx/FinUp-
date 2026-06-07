@@ -9,27 +9,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.finup.app.FinUpApplication
 import com.finup.app.navigation.Routes
 import com.finup.app.viewmodel.*
-import com.finup.app.viewmodel.TransactionViewModelFactory
-import com.finup.app.viewmodel.MetaViewModelFactory
+import com.finup.app.di.rememberAppViewModel
 
 @Composable
 fun DashboardScreen(
     navController: NavController
 ) {
-    val app = LocalContext.current.applicationContext as FinUpApplication
-
-    val transactionViewModel: TransactionViewModel = viewModel(
-        factory = TransactionViewModelFactory(app.container.transactionRepository)
-    )
-
-    val metaViewModel: MetaViewModel = viewModel(
-        factory = MetaViewModelFactory(app.container.metaRepository)
-    )
+    val transactionViewModel: TransactionViewModel = rememberAppViewModel()
+    val metaViewModel: MetaViewModel = rememberAppViewModel()
 
     val transacoes by transactionViewModel.transacoes.collectAsState()
     val metas by metaViewModel.metas.collectAsState()

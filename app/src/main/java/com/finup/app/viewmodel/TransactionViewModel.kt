@@ -37,7 +37,10 @@ class TransactionViewModel(
         }
     }
 
-    suspend fun buscarPorId(id: Int): TransactionEntity? {
-        return repository.buscarPorId(id)
+    fun buscarPorId(id: Int, onResult: (TransactionEntity?) -> Unit) {
+        viewModelScope.launch {
+            val result = repository.buscarPorId(id)
+            onResult(result)
+        }
     }
 }

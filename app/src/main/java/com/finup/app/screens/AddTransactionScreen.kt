@@ -6,12 +6,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.finup.app.FinUpApplication
 import com.finup.app.database.entity.TransactionEntity
+import com.finup.app.di.rememberAppViewModel
 import com.finup.app.viewmodel.TransactionViewModel
-import com.finup.app.viewmodel.TransactionViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,11 +18,7 @@ fun AddTransactionScreen(navController: NavController) {
 
     val app = LocalContext.current.applicationContext as FinUpApplication
 
-    val viewModel: TransactionViewModel = viewModel(
-        factory = TransactionViewModelFactory(
-            transactionRepository = app.container.transactionRepository
-        )
-    )
+    val viewModel: TransactionViewModel = rememberAppViewModel()
 
     var descricao by remember { mutableStateOf("") }
     var valor by remember { mutableStateOf("") }
@@ -36,6 +31,7 @@ fun AddTransactionScreen(navController: NavController) {
         "Saúde",
         "Educação",
         "Moradia",
+        "Salario",
         "Outros"
     )
 
@@ -130,7 +126,7 @@ fun AddTransactionScreen(navController: NavController) {
                 ) return@Button
 
                 val tx = TransactionEntity(
-                    id = 0, // 👈 Room gera automático
+                    id = 0,
                     descricao = descricao,
                     valor = valorDouble,
                     tipo = tipo,
@@ -142,6 +138,17 @@ fun AddTransactionScreen(navController: NavController) {
             }
         ) {
             Text("Salvar")
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        OutlinedButton(
+            onClick = {
+                navController.popBackStack()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Voltar")
         }
     }
 }
