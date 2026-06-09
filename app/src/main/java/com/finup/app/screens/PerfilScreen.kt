@@ -1,90 +1,66 @@
 package com.finup.app.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.finup.app.di.AppViewModelProvider
+import com.finup.app.session.SessionManager
+import com.finup.app.viewmodel.UsuarioViewModel
 
 @Composable
-fun PerfilScreen(
-    navController: NavController
-) {
+fun PerfilScreen(navController: NavController) {
+    val context = LocalContext.current
+    val sessionManager = remember { SessionManager(context) }
+    val userId = sessionManager.getUserId() ?: -1
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    val viewModel: UsuarioViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val usuario by viewModel.usuario.collectAsState()
 
-        Text(
-            text = "Meu Perfil",
-            style = MaterialTheme.typography.headlineLarge
-        )
+    LaunchedEffect(userId) {
+        if (userId != -1) {
+            viewModel.buscarUsuario(userId)
+        }
+    }
 
-        Spacer(Modifier.height(24.dp))
+    Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+        Text("Meu Perfil", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth()
+        Text("Nome: ${usuario?.nome ?: "Carregando..."}", style = MaterialTheme.typography.bodyLarge)
+        Text("Email: ${usuario?.email ?: "Carregando..."}", style = MaterialTheme.typography.bodyLarge)
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+            Text("Voltar ao Dashboard", color = Color.White)
+        }
 
-                Text("Nome:")
-                Text("nynyjxs")
+        Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(Modifier.height(8.dp))
-
-                Text("Email:")
-                Text("nynyjxs@gmail.com")
-
-                Spacer(Modifier.height(16.dp))
-
-                Button(
-                    onClick = { /* futuramente editar perfil */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Editar Perfil")
+        Button(
+            onClick = {
+                viewModel.logout()
+                sessionManager.clearSession()
+                navController.navigate("login") {
+                    popUpTo(0) { inclusive = true }
                 }
-
-                Spacer(Modifier.height(8.dp))
-
-                Button(
-                    onClick = { /* futuramente senha */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Alterar Senha")
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                OutlinedButton(
-                    onClick = {
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Voltar")
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                Button(
-                    onClick = {
-                        navController.navigate("login") {
-                            popUpTo(0) // limpa stack (logout real)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Sair")
-                }
-            }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
+            Text("Sair da Conta")
         }
     }
 }

@@ -9,8 +9,7 @@ sealed class Routes(val route: String) {
     object Relatorio : Routes("relatorio")
     object AddTransaction : Routes("addTransaction")
     object AddMeta : Routes("addMeta")
-
-    object EditTransaction : Routes("edit_transaction/{id}") {
-        fun createRoute(id: Int) = "edit_transaction/$id"
+    object EditTransaction : Routes("editTransaction/{id}") {
+        fun createRoute(id: Int) = "editTransaction/$id"
     }
 }

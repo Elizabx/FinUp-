@@ -5,11 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "metas")
 data class MetaEntity(
-
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-
-    val titulo: String,
-    val valorMeta: Double,
-    val valorAtual: Double = 0.0
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val userId: Int,
+    val objetivo: String,
+    val valorAlvo: Double,
+    val valorAtual: Double,
+    val prazo: String
 )

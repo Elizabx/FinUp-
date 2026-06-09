@@ -4,71 +4,37 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.finup.app.FinUpApplication
-import com.finup.app.viewmodel.AppViewModelFactory
-import com.finup.app.viewmodel.EditTransactionViewModel
+import com.finup.app.di.AppViewModelProvider
+import com.finup.app.viewmodel.TransactionViewModel
 
 @Composable
-fun EditTransactionScreen(
-    navController: NavController,
-    transactionId: Int
-) {
-
-    val app = LocalContext.current.applicationContext as FinUpApplication
-
-    val factory = AppViewModelFactory(app.container)
-
-    val viewModel: EditTransactionViewModel = viewModel(factory = factory)
+fun EditTransactionScreen(navController: NavController, transactionId: Int) {
+    val viewModel: TransactionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
     LaunchedEffect(transactionId) {
         viewModel.carregar(transactionId)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    Column(Modifier.padding(16.dp)) {
+        Text("Editar Transação", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(16.dp))
 
-        Text("Editar Transação")
-
-        Spacer(Modifier.height(12.dp))
-
-        TextField(
-            value = viewModel.valor,
-            onValueChange = viewModel::onValorChange,
-            label = { Text("Valor") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        TextField(
-            value = viewModel.descricao,
-            onValueChange = viewModel::onDescricaoChange,
+        OutlinedTextField(
+            value = viewModel.title,
+            onValueChange = { viewModel.onTitleChange(it) },
             label = { Text("Descrição") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(Modifier.height(8.dp))
 
-        TextField(
-            value = viewModel.categoria,
-            onValueChange = viewModel::onCategoriaChange,
-            label = { Text("Categoria") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        TextField(
-            value = viewModel.tipo,
-            onValueChange = viewModel::onTipoChange,
-            label = { Text("Tipo") },
+        OutlinedTextField(
+            value = viewModel.amount,
+            onValueChange = { viewModel.onAmountChange(it) },
+            label = { Text("Valor") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -81,7 +47,7 @@ fun EditTransactionScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Salvar")
+            Text("Salvar Alterações")
         }
     }
 }

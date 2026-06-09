@@ -4,14 +4,11 @@ import com.finup.app.database.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
-
-    fun listarTodas(): Flow<List<TransactionEntity>>
-
-    suspend fun inserir(transaction: TransactionEntity)
-
-    suspend fun deletar(transaction: TransactionEntity)
-
-    suspend fun atualizar(transaction: TransactionEntity)
-
-    suspend fun buscarPorId(id: Int): TransactionEntity?
+    fun getAllTransactionsStream(): Flow<List<TransactionEntity>>
+    fun getSaldoStream(): Flow<Double?>
+    fun getTransactionsByUser(userId: Int): Flow<List<TransactionEntity>>
+    suspend fun insertTransaction(transaction: TransactionEntity)
+    suspend fun deleteTransaction(transaction: TransactionEntity)
+    suspend fun updateTransaction(transaction: TransactionEntity)
+    suspend fun getTransactionById(id: Int): TransactionEntity?
 }

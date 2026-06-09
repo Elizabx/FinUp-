@@ -10,59 +10,25 @@ import com.finup.app.screens.*
 
 @Composable
 fun AppNavigation() {
-
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Routes.Login.route
-    ) {
-
-        composable(Routes.Login.route) {
-            LoginScreen(navController)
-        }
-
-        composable(Routes.Cadastro.route) {
-            CadastroScreen(navController)
-        }
-
-        composable(Routes.Dashboard.route) {
-            DashboardScreen(navController)
-        }
-
-        composable(Routes.Meta.route) {
-            MetaScreen(navController)
-        }
-
-        composable(Routes.Perfil.route) {
-            PerfilScreen(navController)
-        }
-
-        composable(Routes.Relatorio.route) {
-            RelatorioScreen(navController)
-        }
-
-        composable(Routes.AddTransaction.route) {
-            AddTransactionScreen(navController)
-        }
-
-        composable(Routes.AddMeta.route) {
-            AddMetaScreen(navController)
-        }
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") { LoginScreen(navController = navController) }
+        composable("cadastro") { CadastroScreen(navController = navController) }
+        composable("dashboard") { DashboardScreen(navController = navController) }
+        composable("add_transaction") { AddTransactionScreen(navController = navController) }
+        composable("extrato") { ExtratoScreen(navController = navController) }
+        composable("relatorio") { RelatorioScreen(navController = navController) }
+        composable("perfil") { PerfilScreen(navController = navController) }
+        composable("meta") { MetaScreen(navController = navController) }
+        composable("add_meta") { AddMetaScreen(navController = navController) }
 
         composable(
-            route = "edit_transaction/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.IntType
-            })
+            route = "edit_meta/{metaId}",
+            arguments = listOf(navArgument("metaId") { type = NavType.IntType })
         ) { backStackEntry ->
-
-            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-
-            EditTransactionScreen(
-                navController = navController,
-                transactionId = id
-            )
+            val metaId = backStackEntry.arguments?.getInt("metaId") ?: -1
+            EditMetaScreen(navController = navController, metaId = metaId)
         }
     }
 }
