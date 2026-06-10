@@ -176,8 +176,6 @@ O projeto possui as seguintes telas:
 * Relatórios
 * Perfil
 
-> Adicione screenshots nesta seção para demonstrar a interface do aplicativo.
-
 ---
 
 ## 📐 Arquitetura
